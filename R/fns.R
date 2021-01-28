@@ -80,10 +80,10 @@ pull1 = function(.data, my_var, one_to_pull = 1){
 
 #' A theme for presentations
 #'
-#' Ever seen oblivious researchers presenting slides with ggplot2's
-#' characteristic tiny axis-titles that even Legolas's elf eyes couldn't see?
-#' This theme makes text larger so that the output plots look nice on slides.
-#' Otherwise it's mostly identical to \code{ggplot2::theme_gray()}.
+#' Ever seen researchers presenting slides with ggplot2's characteristic tiny
+#' axis-titles that even Legolas's elf eyes couldn't see? This theme makes text
+#' larger so that the output plots look nice on slides. Otherwise it's mostly
+#' identical to \code{ggplot2::theme_gray()}.
 #' @param base_size The baseline size of plot elements
 #' @param ... arguments to pass to ggplot2::theme()
 #' @export
@@ -98,5 +98,19 @@ theme_pres = function(base_size = 22, ...) {
               base_rect_size = base_rect_size) %+replace%
     theme(strip.text = element_text(color = 'grey10'),
           ...)
+}
+
+#' Show the top-left corner
+#'
+#' This function pulls out the top-left corner of a data frame or matrix. This
+#' is useful if the input is very tall and/or wide, such that printing the
+#' entire object fills up the entire console, even with the nice printing
+#' features of tibbles.
+#' @param x the input data frame or matrix
+#' @param nrow number of rows to pull out
+#' @param ncol number of columns to pull out
+#' @export
+corner = function(x, nrow = 5, ncol = 5){
+  x[1:nrow, 1:ncol]
 }
 
