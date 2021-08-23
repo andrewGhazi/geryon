@@ -2,6 +2,7 @@
 
 export(add_local_density)
 export(corner)
+export(fpat)
 export(get_local_density)
 export(pull1)
 export(show_classes)
