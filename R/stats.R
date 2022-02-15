@@ -62,7 +62,7 @@ color_density_scatterplot = function(.data, x, y, var = 'local_density'){
 #' @param stan_fit a stanfit object to summarise
 #' @param ... arguments passed to `summary,stanfit-method` e.g. pars or probs
 #' @return a summary tibble
-#' @seealso \code{\link[rstan:summary-methods]{summary}}
+#' @seealso \code{\link[rstan:stanfit-method-summary]{summary}}
 #' @export
 summary_tbl = function(stan_fit, ...){
   if (!requireNamespace('rstan', quietly = TRUE)){
