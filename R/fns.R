@@ -1,7 +1,7 @@
 #' @title  See the memory usage of objects in your workspace
 #'
 #' It's easy to see the memory usage of a single object with
-#' \code{object.size()} but doing that in a sorted, pretty way for everything in
+#' \code{lobstr::obj_size()} but doing that in a sorted, pretty way for everything in
 #' the workspace is a bit more involved. This function has taken care of that.
 #'
 #' @return A tibble of objects in the global environment and columns stating
@@ -24,7 +24,7 @@ ws_size = function(){
   # the raw integer number of bytes).
 
   tibble(obj = ls(name = .GlobalEnv)) %>%
-    mutate(obj_size = map(.data$obj, ~object.size(get(.x)))) %>%
+    mutate(obj_size = map(.data$obj, ~lobstr::obj_size(get(.x)))) %>%
     mutate(size_string = map_chr(.data$obj_size, format, units = 'auto'),
            n_bytes = as.numeric(.data$obj_size)) %>%
     arrange(desc(.data$n_bytes)) %>%

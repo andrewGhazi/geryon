@@ -17,7 +17,8 @@ Imports:
     purrr,
     rlang,
     tidyr,
-    tibble
+    tibble,
+    lobstr
 Suggests: 
     testthat,
     rstan
