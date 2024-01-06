@@ -2,11 +2,7 @@
 % Please edit documentation in R/fns.R
 \name{ws_size}
 \alias{ws_size}
-\title{See the memory usage of objects in your workspace
-
-It's easy to see the memory usage of a single object with
-\code{lobstr::obj_size()} but doing that in a sorted, pretty way for everything in
-the workspace is a bit more involved. This function has taken care of that.}
+\title{See the memory usage of objects in your workspace}
 \usage{
 ws_size()
 }
@@ -16,8 +12,6 @@ how much memory the objects are using (both with pretty units and the raw
 integer number of bytes).
 }
 \description{
-See the memory usage of objects in your workspace
-
 It's easy to see the memory usage of a single object with
 \code{lobstr::obj_size()} but doing that in a sorted, pretty way for everything in
 the workspace is a bit more involved. This function has taken care of that.
