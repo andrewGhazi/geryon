@@ -18,7 +18,9 @@ Imports:
     rlang,
     tidyr,
     tibble,
-    lobstr
+    lobstr,
+    beepr,
+    cli
 Suggests: 
     testthat,
     rstan
