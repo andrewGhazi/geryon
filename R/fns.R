@@ -227,11 +227,12 @@ timer = function(m = 5, sound = 9) {
   spinna = cli::make_spinner(which = "dots4",
                              template = paste0("{spin} Timer set for ",
                                                round(m, digits = 2),
-                                               " minutes.\n"))
+                                               " minutes."))
 
   lapply(1:(10*60*m), \(x) {spinna$spin(); Sys.sleep(.1)})
 
   spinna$finish
+  cat("\n")
 
   beepr::beep(sound = sound)
 }
