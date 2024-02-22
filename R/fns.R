@@ -269,7 +269,7 @@ insert_img_link = function(img_dir = "images/") {
 
   if (!dir.exists(img_path)) cli::cli_abort("There's no images/ directory in the directory of the current source document!")
 
-  img_file = fs::path(img_dir,
+  img_file = fs::path(img_path,
                       format(Sys.time(), "%Y-%m-%e_%H:%M:%S"),
                       ext = "png")
 
@@ -278,7 +278,8 @@ insert_img_link = function(img_dir = "images/") {
           args = c("-selection", "clipboard", "-t", "image/png",
                    "-o", ">", img_file))
 
-  rstudioapi::insertText(text = paste0("![](", img_file, ")"),
+  rel_path = img_file |> fs::path_split() |> getElement(1) |> tail(2) |> fs::path_join()
+  rstudioapi::insertText(text = paste0("![](", rel_path, ")"),
                          location = cur_source$selection[[1]]$range,
                          id = cur_source$id)
 }
