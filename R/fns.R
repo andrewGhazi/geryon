@@ -258,3 +258,27 @@ find_dups = function(data, var, order_by = TRUE) {
 
   res
 }
+
+#' @export
+insert_img_link = function(img_dir = "images/") {
+  cur_source = rstudioapi::getSourceEditorContext()
+
+  img_path = cur_source$path |>
+    dirname() |>
+    fs::path(img_dir); img_path
+
+  if (!dir.exists(img_path)) cli::cli_abort("There's no images/ directory in the directory of the current source document!")
+
+  img_file = fs::path(img_path,
+                      format(Sys.time(), "%Y-%m-%e_%H:%M:%S"),
+                      ext = "png")
+
+  # TODO: check xclip is installed
+  system2("xclip",
+          args = c("-selection", "clipboard", "-t", "image/png",
+                   "-o", ">", img_file))
+
+  rstudioapi::insertText(text = paste0("![](", img_file, ")"),
+                         location = cur_source$selection[[1]]$range,
+                         id = cur_source$id)
+}
