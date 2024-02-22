@@ -260,7 +260,7 @@ find_dups = function(data, var, order_by = TRUE) {
 }
 
 #' @export
-insert_img_link = function(img_dir = "images/") {
+insert_img_link = function() {
   cur_source = rstudioapi::getSourceEditorContext()
 
   img_path = cur_source$path |>
@@ -274,6 +274,7 @@ insert_img_link = function(img_dir = "images/") {
                       ext = "png")
 
   # TODO: check xclip is installed
+  # system2("which", "xclip")
   system2("xclip",
           args = c("-selection", "clipboard", "-t", "image/png",
                    "-o", ">", img_file))

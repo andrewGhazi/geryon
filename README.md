@@ -23,7 +23,7 @@ remotes::install_github("andrewGhazi/geryon")
 Right now this package contains only a handful of functions: `ws_size`,
 `pull1`, `get/add_local_density` and `theme_pres`.
 
-### ws\_size
+### ws_size
 
 It’s easy to see the memory usage of a single object with `object.size`
 but doing that in a sorted, pretty way for everything in the workspace
@@ -59,7 +59,7 @@ clutter up the console. `pull1` just pulls out one.
     > tmp %>% pull1(samples)
      [1] 4.651063 3.986187 5.421502 4.554197 4.880644 4.511554 5.572671 4.948658 6.132115 5.545000
 
-### theme\_pres
+### theme_pres
 
 This is simply a modified version of `ggplot2::theme_light` with larger
 text and dark facet labels. This makes it easier to prepare easy-to-read
@@ -69,7 +69,7 @@ plots for presentations.
 
 ![](man/figures/theme_pres_example.png)
 
-### get/add\_local\_density
+### get/add_local_density
 
 This is handy for dealing with severe overplotting in situations where
 you still want to plot individual points rather than a density estimate.
@@ -109,5 +109,30 @@ structure hidden in the overplotted region AND important meaning
 associated with individual points in the sparse outer regions. This sort
 of plot shows both.
 
-I’m working on a color\_density\_scatter function that goes straight
-from the data to the plot.
+I’m working on a color_density_scatter function that goes straight from
+the data to the plot.
+
+### `insert_img_link()`
+
+This function inserts an image link (`![](images/blah.png)`) to an image
+on your clipboard into the current source document at the cursor. This
+way you don’t have to fuss around with the file manager to [get images
+into your Quarto
+report](https://quarto.org/docs/authoring/figures.html).
+
+It’s provided as an RStudio addin so you can bind a keyboard shortcut to
+it. I use `Ctrl+Shift+V`.
+
+This function makes some assumptions and currently doesn’t do many
+checks. There are some caveats:
+
+- It only inserts PNGs. I’ll probably add jpg sooner or later.
+  - It won’t work if you currently have multiple images on your
+    clipboard.
+- It uses [xclip](https://www.mankier.com/1/xclip#) to copy from the
+  image from the clipboard to the `images/` directory. That must be
+  installed.
+- There must be an `images/` directory in the same directory as the
+  source document.
+- It doesn’t clean up after itself. If you use it a lot, you might end
+  up with many copies of the same image in your images directory.

@@ -115,3 +115,17 @@ knitr::include_graphics('man/figures/color_density.png')
 This is a trivial example but sometimes there's simultaneously important structure hidden in the overplotted region AND important meaning associated with individual points in the sparse outer regions. This sort of plot shows both.
 
 I'm working on a color_density_scatter function that goes straight from the data to the plot.
+
+### `insert_img_link()`
+
+This function inserts an image link (`![](images/blah.png)`) to an image on your clipboard into the current source document at the cursor. This way you don't have to fuss around with the file manager to [get images into your Quarto report](https://quarto.org/docs/authoring/figures.html).
+
+It's provided as an RStudio addin so you can bind a keyboard shortcut to it. I use `Ctrl+Shift+V`.
+
+This function makes some assumptions and currently doesn't do many checks. There are some caveats: 
+
+* It only inserts PNGs. I'll probably add jpg sooner or later.
+  * It won't work if you currently have multiple images on your clipboard.
+* It uses [xclip](https://www.mankier.com/1/xclip#) to copy from the image from the clipboard to the `images/` directory. That must be installed.
+* There must be an `images/` directory in the same directory as the source document.
+* It doesn't clean up after itself. If you use it a lot, you might end up with many copies of the same image in your images directory.
