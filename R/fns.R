@@ -134,6 +134,7 @@ show_classes = function(x) {
 #' @param x input data frame
 #' @param pattern pattern to search for
 #' @param col_name column to search
+#' @export
 fpat = function(x, pattern, col_name) {
   x %>%
     dplyr::filter(grepl(pattern, x = {{ col_name }}))
