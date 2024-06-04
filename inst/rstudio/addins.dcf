@@ -1,0 +1,4 @@
+Name: Insert image link from clipboard
+Description: Copies image from the clipboard to the images/ directory of the current document and inserts an image link at the cursor position.
+Binding: insert_img_link
+Interactive: false
