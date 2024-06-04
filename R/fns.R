@@ -1,6 +1,6 @@
-#' @title  See the memory usage of objects in your workspace
+#' See the memory usage of objects in your workspace
 #'
-#' It's easy to see the memory usage of a single object with
+#' @description It's easy to see the memory usage of a single object with
 #' \code{lobstr::obj_size()} but doing that in a sorted, pretty way for everything in
 #' the workspace is a bit more involved. This function has taken care of that.
 #'
@@ -29,9 +29,9 @@ ws_size = function(){
   }
 
   tibble(obj = ls(name = .GlobalEnv)) %>%
-    mutate(obj_size = map(.data$obj, ~lobstr::obj_size(get(.x)))) %>%
+    mutate(obj_size = map(.data$obj, \(.x) {lobstr::obj_size(get(.x))})) %>%
     mutate(size_string = map_chr(.data$obj_size,
-                                 ~format(set_obj_class(.x), units = 'auto')),
+                                 \(.x) {format(set_obj_class(.x), units = 'auto')}),
            n_bytes = as.numeric(.data$obj_size)) %>%
     arrange(desc(.data$n_bytes)) %>%
     select(-.data$obj_size) %>%
@@ -114,12 +114,34 @@ theme_pres = function(base_size = 22, ...) {
 #' is useful if the input is very tall and/or wide, such that printing the
 #' entire object fills up the entire console, even with the nice printing
 #' features of tibbles.
+#' @details
+#' use negative nr or nc to select bottom or right corners, respectively.
+#'
 #' @param x the input data frame or matrix
-#' @param nrow number of rows to pull out
-#' @param ncol number of columns to pull out
+#' @param nr number of rows to pull out
+#' @param nc number of columns to pull out
 #' @export
-corner = function(x, nrow = 5, ncol = 5){
-  x[1:nrow, 1:ncol]
+corner = function(x, nr = 5, nc = 5) {
+
+  nrx = nrow(x)
+  ncx = ncol(x)
+
+  nr_s = min(nrx, abs(nr))
+  nc_s = min(ncx, abs(nc))
+
+  if (nr < 0) {
+    row_range = (nrx - nr_s + 1):nrx
+  } else {
+    row_range = 1:nr_s
+  }
+
+  if (nc < 0) {
+    col_range = (ncx - nc_s + 1):ncx
+  } else {
+    col_range = 1:nc_s
+  }
+
+  x[row_range, col_range]
 }
 
 #' Show the classes of a data frame
