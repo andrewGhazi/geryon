@@ -18,5 +18,5 @@ a summary tibble
 Get a stan summary as a tibble rather than a list of matrices
 }
 \seealso{
-\code{\link[rstan:summary-methods]{summary}}
+\code{\link[rstan:stanfit-method-summary]{summary}}
 }
