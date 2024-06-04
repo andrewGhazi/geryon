@@ -163,3 +163,29 @@ scale_color_broad = function(..., type = "seq", aesthetics = "color") {
 scale_fill_broad = function(..., type = "seq", aesthetics = "fill") {
   discrete_scale(aesthetics, "broad", broad_pal(type), ...)
 }
+
+#' Assign the default argument values of a function in the global environment
+#'
+#' @param f a function
+#' @export
+args2ge = function(f) {
+
+  forms = formals(f)
+
+  for (i in seq_along(forms)) {
+    if (class(forms[[i]]) == "name") next
+
+    if (class(forms[[i]]) == "call") {
+      assign(x     = names(forms)[i],
+             value = eval(forms[[i]]),
+             envir = globalenv())
+      next
+    }
+
+    assign(x     = names(forms)[i],
+           value = forms[[i]],
+           envir = globalenv())
+  }
+
+  return(invisible(NULL))
+}
