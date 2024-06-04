@@ -12,8 +12,8 @@ theme_pres(base_size = 22, ...)
 \item{...}{arguments to pass to ggplot2::theme()}
 }
 \description{
-Ever seen oblivious researchers presenting slides with ggplot2's
-characteristic tiny axis-titles that even Legolas's elf eyes couldn't see?
-This theme makes text larger so that the output plots look nice on slides.
-Otherwise it's mostly identical to \code{ggplot2::theme_gray()}.
+Ever seen researchers presenting slides with ggplot2's characteristic tiny
+axis-titles that even Legolas's elf eyes couldn't see? This theme makes text
+larger so that the output plots look nice on slides. Otherwise it's mostly
+identical to \code{ggplot2::theme_gray()}.
 }
