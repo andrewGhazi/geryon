@@ -260,7 +260,7 @@ find_dups = function(data, var, order_by = TRUE) {
 }
 
 #' @export
-insert_img_link = function() {
+insert_img_link = function(img_dir = "images/") {
   cur_source = rstudioapi::getSourceEditorContext()
 
   img_path = cur_source$path |>
