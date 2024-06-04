@@ -11,7 +11,9 @@
 #' @import ggplot2
 #' @import ks
 #' @import tibble
-#' @import purrr
+#' @importFrom purrr map map_chr map_dfr
+#' @import tidyr
+#' @import rlang
 #' @importFrom rlang enquo
 #' @importFrom rlang !!
 #' @importFrom rlang :=
@@ -114,3 +116,25 @@ corner = function(x, nrow = 5, ncol = 5){
   x[1:nrow, 1:ncol]
 }
 
+#' Show the classes of a data frame
+#'
+#' Return a data frame giving the class of each column of the input
+#' @param x input data frame
+#'
+#' @export
+show_classes = function(x) {
+  x %>%
+    map_dfr(function(.x) paste(class(.x[[1]]), collapse = ', ')) %>%
+    tidyr::pivot_longer(cols = dplyr::everything(),
+                        names_to = 'column',
+                        values_to = 'class')
+}
+
+#' Filter to rows matching a pattern
+#' @param x input data frame
+#' @param pattern pattern to search for
+#' @param col_name column to search
+fpat = function(x, pattern, col_name) {
+  x %>%
+    dplyr::filter(grepl(pattern, x = {{ col_name }}))
+}
