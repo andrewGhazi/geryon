@@ -69,7 +69,7 @@ summary_tbl = function(stan_fit, ...){
     stop('rstan is needed to use summary_tbl')
   }
 
-  stan_summ = summary(stan_fit, ...)$summary
+  stan_summ = rstan::summary(stan_fit, ...)$summary
 
   stan_summ %>%
     as.data.frame() %>%
