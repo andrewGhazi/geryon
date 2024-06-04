@@ -211,3 +211,49 @@ args2ge = function(f) {
 
   return(invisible(NULL))
 }
+
+#' Set a timer.
+#'
+#' @description
+#' "wilhelm" is the best sound, you know it.
+#'
+#' @param m time in minutes
+#' @param sound beepr::beep() sound number
+#' @examples
+#' timer(2/60)
+#' @export
+timer = function(m = 5, sound = 9) {
+
+  spinna = cli::make_spinner(which = "dots4",
+                             template = paste0("{spin} Timer set for ",
+                                               round(m, digits = 2),
+                                               " minutes."))
+
+  lapply(1:(10*60*m), \(x) {spinna$spin(); Sys.sleep(.1)})
+
+  spinna$finish
+
+  beepr::beep(sound = sound)
+}
+
+#' Find duplicates
+#'
+#' @description Filter to rows where the specified variable has at least one dulicate.
+#' Useful for identifying problematic cases when 1:1 joins come out at 1:many.
+#'
+#' @param data a data frame
+#' @param var a variable in that data frame
+#' @param order_by if TRUE, order the result by the specified variable
+#' @examples
+#' mtcars |> find_dups(mpg)
+#' @export
+find_dups = function(data, var, order_by = TRUE) {
+  res = data |>
+    dplyr::filter({{var}} %in% {{var}}[duplicated({{var}})])
+
+  if (order_by) {
+    res = res |> dplyr::arrange({{var}})
+  }
+
+  res
+}
