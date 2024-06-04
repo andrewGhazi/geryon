@@ -3,6 +3,7 @@
 export(add_local_density)
 export(get_local_density)
 export(pull1)
+export(summary_tbl)
 export(theme_pres)
 export(ws_size)
 import(dplyr)
