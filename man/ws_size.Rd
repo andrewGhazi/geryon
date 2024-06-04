@@ -5,7 +5,7 @@
 \title{See the memory usage of objects in your workspace
 
 It's easy to see the memory usage of a single object with
-\code{object.size()} but doing that in a sorted, pretty way for everything in
+\code{lobstr::obj_size()} but doing that in a sorted, pretty way for everything in
 the workspace is a bit more involved. This function has taken care of that.}
 \usage{
 ws_size()
@@ -19,6 +19,6 @@ integer number of bytes).
 See the memory usage of objects in your workspace
 
 It's easy to see the memory usage of a single object with
-\code{object.size()} but doing that in a sorted, pretty way for everything in
+\code{lobstr::obj_size()} but doing that in a sorted, pretty way for everything in
 the workspace is a bit more involved. This function has taken care of that.
 }
