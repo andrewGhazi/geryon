@@ -20,7 +20,9 @@ Imports:
     tibble,
     lobstr,
     beepr,
-    cli
+    cli,
+    fs,
+    rstudioapi
 Suggests: 
     testthat,
     rstan
