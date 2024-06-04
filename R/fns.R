@@ -139,3 +139,21 @@ fpat = function(x, pattern, col_name) {
   x %>%
     dplyr::filter(grepl(pattern, x = {{ col_name }}))
 }
+
+#' @export
+broad_pal = function(type = "seq"){
+  function(n){
+    if (n>7) stop("The Broad palette only has 7 colors")
+    broad_colors[1:n]
+  }
+}
+
+#' @export
+scale_color_broad = function(..., type = "seq", aesthetics = "color") {
+  discrete_scale(aesthetics, "broad", broad_pal(type), ...)
+}
+
+#' @export
+scale_fill_broad = function(..., type = "seq", aesthetics = "fill") {
+  discrete_scale(aesthetics, "broad", broad_pal(type), ...)
+}
