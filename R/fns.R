@@ -259,6 +259,21 @@ find_dups = function(data, var, order_by = TRUE) {
   res
 }
 
+#' Insert an image link to an image on your clipboard
+#'
+#' @description This function let's you "paste" an image from your clipboard
+#'   into your Quarto document. It's available as an RStudio addin so you can
+#'   bind it to a keyboard shortcut. I use ctrl+shift+H.
+#' @details This function requires xclip to be installed on the user's system
+#'   (non-Linux users, you're on your own). It copies the image from the
+#'   clipboard to the specified image directory into a time-stamped file, then
+#'   inserts the link to the image in the current source pane document at the
+#'   cursor. It also includes an empty alternate text tag to encourage authors
+#'   to make their work more accessible.
+#'
+#' @param img_dir directory where the image will be pasted (relative to the
+#'   working directory of the current document in the source panel).
+#'
 #' @export
 insert_img_link = function(img_dir = "images/") {
   cur_source = rstudioapi::getSourceEditorContext()
@@ -280,7 +295,7 @@ insert_img_link = function(img_dir = "images/") {
                    "-o", ">", img_file))
 
   rel_path = img_file |> fs::path_split() |> getElement(1) |> tail(2) |> fs::path_join()
-  rstudioapi::insertText(text = paste0("![](", rel_path, ")"),
+  rstudioapi::insertText(text = paste0("![](", rel_path, "){fig-alt=\"\"}"),
                          location = cur_source$selection[[1]]$range,
                          id = cur_source$id)
 }
