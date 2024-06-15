@@ -9,7 +9,7 @@ Authors@R:
            comment = c(ORCID = "YOUR-ORCID-ID"))
 Description: What the package does (one paragraph).
 License: MIT + file LICENSE
-Depends: R (>= 3.1.0)
+Depends: R (>= 4.2.1)
 Imports: 
     dplyr,
     ggplot2,
@@ -26,7 +26,11 @@ Imports:
 Suggests: 
     testthat,
     rstan,
-    igraph
+    igraph,
+    ggraph,
+    pak,
+    pals,
+    grid
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
