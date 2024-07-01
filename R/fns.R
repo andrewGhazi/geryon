@@ -285,7 +285,7 @@ insert_img_link = function(img_dir = "images/") {
   if (!dir.exists(img_path)) cli::cli_abort("There's no images/ directory in the directory of the current source document!")
 
   img_file = fs::path(img_path,
-                      format(Sys.time(), "%Y-%m-%d_%H:%M:%S"),
+                      format(Sys.time(), "%Y-%m-%d_%H-%M-%S"),
                       ext = "png")
 
   # TODO: check xclip is installed
