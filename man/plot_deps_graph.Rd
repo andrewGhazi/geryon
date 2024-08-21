@@ -4,7 +4,7 @@
 \alias{plot_deps_graph}
 \title{Plot dependency graph}
 \usage{
-plot_deps_graph(pkg, dep_type = c("depends", "imports"))
+plot_deps_graph(pkg, dep_type = c("depends", "imports", "linkingto"))
 }
 \arguments{
 \item{pkg}{package string passed to \code{\link[pak:pkg_deps]{pak::pkg_dep}}}

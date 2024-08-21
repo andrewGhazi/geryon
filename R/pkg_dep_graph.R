@@ -15,7 +15,7 @@
 #'
 #' @export
 plot_deps_graph = function(pkg,
-                           dep_type = c("depends", "imports")) {
+                           dep_type = c("depends", "imports", "linkingto")) {
 
   rlang::check_installed("igraph")
   rlang::check_installed("ggraph")
@@ -26,7 +26,7 @@ plot_deps_graph = function(pkg,
   dep_type = tolower(dep_type)
 
   rlang::arg_match(dep_type,
-                   values = c("depends", "imports", "suggests"),
+                   values = c("depends", "imports", "suggests", "linkingto"),
                    multiple = TRUE)
 
   ex = pak::pkg_deps(pkg) |>
@@ -53,8 +53,7 @@ plot_deps_graph = function(pkg,
     cli::cli_alert_warning("Cycle detected among suggested packages. Can't color nodes by number of dependencies.")
     fill_aes = ggplot2::aes(label = name)
     fill_scale = NULL
-  }
-  else {
+  } else {
     fill_scale = ggplot2::scale_fill_gradientn(colors = pals::parula(100)[5:100])
     fill_aes = ggplot2::aes(label = name,
                             fill = igraph::neighborhood_size(gr,
