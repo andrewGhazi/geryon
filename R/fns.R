@@ -295,7 +295,7 @@ insert_img_link = function(img_dir = "images/") {
                    "-o", ">", img_file))
 
   rel_path = img_file |> fs::path_split() |> getElement(1) |> tail(2) |> fs::path_join()
-  rstudioapi::insertText(text = paste0("![](", rel_path, "){fig-alt=\"\"}"),
+  rstudioapi::insertText(text = paste0("![](", rel_path, "){fig-alt=\"\" style=\"filter: drop-shadow(0 0 0.75rem grey);\"}"),
                          location = cur_source$selection[[1]]$range,
                          id = cur_source$id)
 }
