@@ -39,6 +39,8 @@ ranked_pairs = function(vote_df,
 
   cli::cli_alert_warning("This function is still experimental. It probably doesn't handle ties nor ballots with equal ranks properly.")
 
+  n_cand = dplyr::n_distinct(vote_df$candidate)
+
   # Count prefs by pair ----
   .count_pair = function(c1, c2, vote_df) {
     res = vote_df |>
