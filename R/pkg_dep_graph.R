@@ -54,7 +54,7 @@ plot_deps_graph = function(pkg,
     fill_aes = ggplot2::aes(label = name)
     fill_scale = NULL
   } else {
-    fill_scale = ggplot2::scale_fill_gradientn(colors = pals::parula(100)[12:95])
+    fill_scale = ggplot2::scale_fill_gradientn(colors = pals::parula(100)[12:97])
     fill_aes = ggplot2::aes(label = name,
                             fill = igraph::neighborhood_size(gr,
                                                              mode = "out",
