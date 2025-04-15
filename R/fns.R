@@ -9,10 +9,8 @@
 #'   integer number of bytes).
 #' @import dplyr
 #' @import ggplot2
-#' @import ks
 #' @import tibble
 #' @importFrom purrr map map_chr map_dfr
-#' @import tidyr
 #' @import rlang
 #' @importFrom rlang enquo
 #' @importFrom rlang !!
