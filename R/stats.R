@@ -55,24 +55,3 @@ color_density_scatterplot = function(.data, x, y, var = 'local_density'){
     geom_point(aes(color = !!eq_var))
 
 }
-
-#' Summarise a stanfit in a tibble
-#'
-#' @description Get a stan summary as a tibble rather than a list of matrices
-#' @param stan_fit a stanfit object to summarise
-#' @param ... arguments passed to `summary,stanfit-method` e.g. pars or probs
-#' @return a summary tibble
-#' @seealso \code{\link[rstan:stanfit-method-summary]{summary}}
-#' @export
-summary_tbl = function(stan_fit, ...){
-  if (!requireNamespace('rstan', quietly = TRUE)){
-    stop('rstan is needed to use summary_tbl')
-  }
-
-  stan_summ = rstan::summary(stan_fit, ...)$summary
-
-  stan_summ %>%
-    as.data.frame() %>%
-    rownames_to_column('param') %>%
-    as_tibble
-}
