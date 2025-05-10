@@ -16,13 +16,13 @@ Imports:
     ks,
     purrr,
     rlang,
-    tidyr,
     tibble,
     lobstr,
     beepr,
     cli,
     fs,
-    rstudioapi
+    rstudioapi,
+    data.table
 Suggests: 
     testthat,
     rstan,

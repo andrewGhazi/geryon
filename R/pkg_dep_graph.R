@@ -29,13 +29,20 @@ plot_deps_graph = function(pkg,
                    values = c("depends", "imports", "suggests", "linkingto"),
                    multiple = TRUE)
 
-  ex = pak::pkg_deps(pkg) |>
+  nested_pkg_list = pak::pkg_deps(pkg) |>
     dplyr::select(package, deps) |>
-    dplyr::rename(from = package) |>
-    tidyr::unnest(deps, names_repair = "unique") |>
-    dplyr::rename(to = "package")
+    dplyr::rename(from = package)
 
-  edge_list = ex |>
+  names(nested_pkg_list$deps) = nested_pkg_list$from
+
+  unnested = data.table::rbindlist(nested_pkg_list$deps,
+                                   idcol = "from") |>
+    dplyr::rename(to = "package") |>
+    tibble::as_tibble()
+
+  attr(unnested, ".internal.selfref") = NULL # just to retain perfect consistency with the tidyr::unnest
+
+  edge_list = unnested |>
     dplyr::filter(tolower(type) %in% dep_type) |>
     dplyr::select(from:to) |>
     unique() |>
