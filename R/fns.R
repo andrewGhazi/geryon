@@ -142,20 +142,6 @@ corner = function(x, nr = 5, nc = 5) {
   x[row_range, col_range]
 }
 
-#' Show the classes of a data frame
-#'
-#' Return a data frame giving the class of each column of the input
-#' @param x input data frame
-#'
-#' @export
-show_classes = function(x) {
-  x %>%
-    map_dfr(function(.x) paste(class(.x[[1]]), collapse = ', ')) %>%
-    tidyr::pivot_longer(cols = dplyr::everything(),
-                        names_to = 'column',
-                        values_to = 'class')
-}
-
 #' Filter to rows matching a pattern
 #' @param x input data frame
 #' @param pattern pattern to search for
