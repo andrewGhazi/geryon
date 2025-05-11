@@ -23,25 +23,14 @@ ws_size = function(){
 
   rlang::check_installed("lobstr")
 
-  set_obj_class = function(x){
-    class(x) = "object_size"
-    x
-  }
-
   tibble(obj = ls(name = .GlobalEnv)) |>
-    dplyr::mutate(obj_size = map(.data$obj, \(.x) lobstr::obj_size(get(.x)))) |>
-    dplyr::mutate(
-      size_string = map_chr(
-        .data$obj_size,
-        \(.x) {
-          format(set_obj_class(.x), units = "auto")
-        }
-      ),
-      n_bytes = as.numeric(.data$obj_size)
-    ) |>
-    dplyr::arrange(dplyr::desc(.data$n_bytes)) |>
-    dplyr::select(-.data$obj_size) |>
-    dplyr::rename(obj_size = .data$size_string)
+    dplyr::mutate(obj_size = fs::fs_bytes(map_dbl(obj, .get_obj_size))) |>
+    dplyr::arrange(dplyr::desc(obj_size))
+}
+
+.get_obj_size = function(.x) {
+  get(.x, envir = .GlobalEnv) |>
+    lobstr::obj_size()
 }
 
 #' Pull out a single element from a (list-) variable
