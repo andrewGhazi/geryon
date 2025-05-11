@@ -21,19 +21,27 @@ ws_size = function(){
   # stating how much memory the objects are using (both with pretty units and
   # the raw integer number of bytes).
 
+  rlang::check_installed("lobstr")
+
   set_obj_class = function(x){
     class(x) = "object_size"
     x
   }
 
-  tibble(obj = ls(name = .GlobalEnv)) %>%
-    mutate(obj_size = map(.data$obj, \(.x) {lobstr::obj_size(get(.x))})) %>%
-    mutate(size_string = map_chr(.data$obj_size,
-                                 \(.x) {format(set_obj_class(.x), units = 'auto')}),
-           n_bytes = as.numeric(.data$obj_size)) %>%
-    arrange(desc(.data$n_bytes)) %>%
-    select(-.data$obj_size) %>%
-    rename(obj_size = .data$size_string)
+  tibble(obj = ls(name = .GlobalEnv)) |>
+    dplyr::mutate(obj_size = map(.data$obj, \(.x) lobstr::obj_size(get(.x)))) |>
+    dplyr::mutate(
+      size_string = map_chr(
+        .data$obj_size,
+        \(.x) {
+          format(set_obj_class(.x), units = "auto")
+        }
+      ),
+      n_bytes = as.numeric(.data$obj_size)
+    ) |>
+    dplyr::arrange(dplyr::desc(.data$n_bytes)) |>
+    dplyr::select(-.data$obj_size) |>
+    dplyr::rename(obj_size = .data$size_string)
 }
 
 #' Pull out a single element from a (list-) variable

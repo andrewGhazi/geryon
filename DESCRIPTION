@@ -17,7 +17,6 @@ Imports:
     purrr,
     rlang,
     tibble,
-    lobstr,
     beepr,
     cli,
     fs,
@@ -30,7 +29,8 @@ Suggests:
     ggraph,
     pak,
     pals,
-    grid
+    grid,
+    lobstr
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
