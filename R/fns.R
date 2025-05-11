@@ -216,6 +216,8 @@ args2ge = function(f) {
 #' @export
 timer = function(m = 5, sound = 9) {
 
+  rlang::check_installed("beepr")
+
   spinna = cli::make_spinner(which = "dots4",
                              template = paste0("{spin} Timer set for ",
                                                round(m, digits = 2),
