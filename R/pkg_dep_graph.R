@@ -48,8 +48,8 @@ plot_deps_graph = function(pkg,
     unique() |>
     dplyr::filter(to != "R")
 
-  edge_vec = purrr::map2(edge_list$from, edge_list$to,
-                         \(x,y) c(x,y)) |>
+  edge_vec = mapply(\(x,y) c(x,y),
+                    edge_list$from, edge_list$to) |>
     unlist()
 
   gr = igraph::make_directed_graph(edge_vec)

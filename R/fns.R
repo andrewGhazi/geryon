@@ -10,7 +10,6 @@
 #' @import dplyr
 #' @import ggplot2
 #' @import tibble
-#' @importFrom purrr map map_chr map_dfr
 #' @import rlang
 #' @importFrom rlang enquo
 #' @importFrom rlang !!
@@ -24,7 +23,7 @@ ws_size = function(){
   rlang::check_installed("lobstr")
 
   tibble(obj = ls(name = .GlobalEnv)) |>
-    dplyr::mutate(obj_size = fs::fs_bytes(map_dbl(obj, .get_obj_size))) |>
+    dplyr::mutate(obj_size = fs::fs_bytes(sapply(obj, .get_obj_size))) |>
     dplyr::arrange(dplyr::desc(obj_size))
 }
 
@@ -53,33 +52,6 @@ pull1 = function(.data, my_var, one_to_pull = 1){
 
   dplyr::pull(.data, !!eq_var)[[one_to_pull]]
 }
-
-# TODO fix this one day
-# convert_vcf_genome = function(vcf_path, start_genome, goal_genome){
-#   library(VariantAnnotation)
-#   library(rtracklayer)
-#   library(Biostrings)
-#
-#   vcf = VariantAnnotation::readVcf(vcf_path, genome = start_genome)
-#   if(start_genome == 'hg19' & goal_genome == 'hg38'){
-#     path = '/mnt/labhome/andrew/plateletMPRA/data/hg19ToHg38.over.chain'
-#     ch = rtracklayer::import.chain(path)
-#   } else if(start_genome == 'hg38' & goal_genome == 'hg19'){
-#     path = '/mnt/labhome/andrew/plateletMPRA/data/hg38ToHg19.over.chain'
-#     ch = rtracklayer::import.chain(path)
-#   } else {
-#     stop('Unable to use this pair of genomes')
-#   }
-#   seqlevelsStyle(vcf) = 'UCSC'
-#
-#   liftOver(rowRanges(vcf), ch) %>%
-#     unlist %>%
-#     as.data.frame %>%
-#     rownames_to_column() %>%
-#     as_tibble %>% # fucking shitty data formats
-#     mutate(seqnames = gsub('chr', '', as.character(seqnames)),
-#            ALT = ALT %>% map_chr(toString))
-# }
 
 #' A theme for presentations
 #'
