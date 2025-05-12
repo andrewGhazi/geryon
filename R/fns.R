@@ -233,13 +233,26 @@ timer = function(m = 5, sound = 9) {
 #' @export
 find_dups = function(data, var, order_by = TRUE) {
   res = data |>
-    dplyr::filter({{var}} %in% {{var}}[duplicated({{var}})])
+    dplyr::filter(has_dups({{var}}))
 
   if (order_by) {
     res = res |> dplyr::arrange({{var}})
   }
 
   res
+}
+
+#' Has duplicates
+#'
+#' @description
+#' Return TRUE on all elements of a vector that has any duplicates (i.e. including the first occurrence)
+#'
+#' @param x a vector
+#' @returns a logical vector the same length as the input
+#' @seealso [vctrs::vec_duplicate_detect()] (will be faster for large x)
+#' @export
+has_dups = function(x) {
+  x %in% x[duplicated(x)]
 }
 
 #' Insert an image link to an image on your clipboard
@@ -277,7 +290,12 @@ insert_img_link = function(img_dir = "images/") {
           args = c("-selection", "clipboard", "-t", "image/png",
                    "-o", ">", img_file))
 
-  rel_path = img_file |> fs::path_split() |> getElement(1) |> tail(2) |> fs::path_join()
+  rel_path <- img_file |>
+    fs::path_split() |>
+    getElement(1) |>
+    tail(2) |>
+    fs::path_join()
+
   rstudioapi::insertText(text = paste0("![](", rel_path, "){fig-alt=\"\" style=\"filter: drop-shadow(0 0 0.75rem grey);\"}"),
                          location = cur_source$selection[[1]]$range,
                          id = cur_source$id)
