@@ -13,7 +13,6 @@ Depends: R (>= 4.2.1)
 Imports: 
     dplyr,
     ggplot2,
-    ks,
     purrr,
     rlang,
     tibble,
@@ -23,14 +22,14 @@ Imports:
     data.table
 Suggests: 
     testthat,
-    rstan,
     igraph,
     ggraph,
     pak,
     pals,
     grid,
     lobstr,
-    beepr
+    beepr,
+    ks
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)

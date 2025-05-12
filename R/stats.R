@@ -13,7 +13,10 @@
 #' get_local_density(overlapping$x, overlapping$y)
 #' @export
 get_local_density = function(x, y, group = NULL, ...){
+  rlang::check_installed("ks")
+
   if (!missing(group)){stop('Groupwise coloring is not supported yet')}
+
   ks::kde(cbind(x, y),
           eval.points = cbind(x, y),
           ...)$estimate
