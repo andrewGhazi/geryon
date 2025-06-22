@@ -8,6 +8,7 @@
 #'   how much memory the objects are using (both with pretty units and the raw
 #'   integer number of bytes).
 #' @import dplyr
+#' @import collapse
 #' @import ggplot2
 #' @import tibble
 #' @import rlang
@@ -22,9 +23,9 @@ ws_size = function(){
 
   rlang::check_installed("lobstr")
 
-  tibble(obj = ls(name = .GlobalEnv)) |>
-    dplyr::mutate(obj_size = fs::fs_bytes(sapply(obj, .get_obj_size))) |>
-    dplyr::arrange(dplyr::desc(obj_size))
+  data.table::data.table(obj = ls(name = .GlobalEnv)) |>
+    mtt(obj_size = fs::fs_bytes(sapply(obj, .get_obj_size))) |>
+    roworder(-obj_size)
 }
 
 .get_obj_size = function(.x) {
@@ -48,9 +49,7 @@ pull1 = function(.data, my_var, one_to_pull = 1){
   # Use to pull out the first element of a list column in a tibble
   # Optionally you can instead pull the one_to_pull-th element
 
-  eq_var = enquo(my_var)
-
-  dplyr::pull(.data, !!eq_var)[[one_to_pull]]
+  .data[[deparse(substitute(my_var))]][[one_to_pull]]
 }
 
 #' A theme for presentations
@@ -272,4 +271,5 @@ insert_img_link = function(img_dir = "images/") {
                          location = cur_source$selection[[1]]$range,
                          id = cur_source$id)
 }
+
 

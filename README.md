@@ -4,6 +4,7 @@
 # geryon <img src="man/figures/logo.png" align="right" title="Behold the one whose stench fills all the world!" width = "20%"/>
 
 <!-- badges: start -->
+
 <!-- [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 <!-- [![CRAN status](https://www.r-pkg.org/badges/version/geryon)](https://CRAN.R-project.org/package=geryon)
 <!-- badges: end -->
@@ -32,11 +33,11 @@ is a bit more involved. This function has taken care of that.
     > a = 1:10
     > tmp = mtcars
     > ws_size()
-    # A tibble: 2 x 3
-        obj obj_size n_bytes
-      <chr>    <chr>   <int>
-    1   tmp   6.6 Kb    6736
-    2     a 88 bytes      88
+    # A tibble: 2 × 2
+      obj      obj_size
+      <chr> <fs::bytes>
+    1 tmp         7.04K
+    2 a             680
 
 ### pull1
 
