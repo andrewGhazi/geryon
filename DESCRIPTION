@@ -11,10 +11,8 @@ Description: What the package does (one paragraph).
 License: MIT + file LICENSE
 Depends: R (>= 4.2.1)
 Imports: 
-    dplyr,
     ggplot2,
     rlang,
-    tibble,
     cli,
     fs,
     rstudioapi,

@@ -7,7 +7,7 @@
 ws_size()
 }
 \value{
-A tibble of objects in the global environment and columns stating
+A data.table of objects in the global environment and columns stating
 how much memory the objects are using (both with pretty units and the raw
 integer number of bytes).
 }

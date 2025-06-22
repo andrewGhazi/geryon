@@ -34,27 +34,32 @@ get_local_density = function(x, y, group = NULL, ...){
 #'   look a little less speckled.
 #' @export
 add_local_density = function(.data, x, y, var = 'local_density', sort_output = TRUE){
-  eq_var = enquo(var)
-  eq_x = enquo(x)
-  eq_y = enquo(y)
+  vn = (substitute(var))
+  eq_x = .data[[deparse(substitute(x))]]
+  eq_y = .data[[deparse(substitute(y))]]
 
   if (sort_output){
-    mutate(.data, !!eq_var := get_local_density(!!eq_x, !!eq_y)) %>%
-      arrange(!!sym(var))
+
+    nc = ncol(.data)
+
+    mtt(.data, .eq_var = get_local_density(eq_x, eq_y)) |>
+      frename(.eq_var = vn, .nse = FALSE) |>
+      roworderv(cols = nc+1)
   } else{
-    mutate(.data, !!eq_var := get_local_density(!!eq_x, !!eq_y))
+    mtt(.data, .eq_var = get_local_density(eq_x, eq_y)) |>
+      frename(.eq_var = vn, .nse = FALSE)
   }
 }
 
 #'
-color_density_scatterplot = function(.data, x, y, var = 'local_density'){
-  eq_x = enquo(x)
-  eq_y = enquo(y)
-  eq_var = enquo(var)
-
-  .data %>%
-    add_local_density(!!eq_x, !!eq_y, var = var) %>%
-    ggplot(aes(!!eq_x, !!eq_y)) +
-    geom_point(aes(color = !!eq_var))
-
-}
+# color_density_scatterplot = function(.data, x, y, var = 'local_density'){
+#   eq_x = enquo(x)
+#   eq_y = enquo(y)
+#   eq_var = enquo(var)
+#
+#   .data |>
+#     add_local_density(!!eq_x, !!eq_y, var = var) |>
+#     ggplot(aes(!!eq_x, !!eq_y)) +
+#     geom_point(aes(color = !!eq_var))
+#
+# }

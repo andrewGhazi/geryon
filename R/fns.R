@@ -4,16 +4,11 @@
 #' \code{lobstr::obj_size()} but doing that in a sorted, pretty way for everything in
 #' the workspace is a bit more involved. This function has taken care of that.
 #'
-#' @return A tibble of objects in the global environment and columns stating
+#' @return A data.table of objects in the global environment and columns stating
 #'   how much memory the objects are using (both with pretty units and the raw
 #'   integer number of bytes).
-#' @import dplyr
 #' @import collapse
-#' @import tibble
 #' @import rlang
-#' @importFrom rlang enquo
-#' @importFrom rlang !!
-#' @importFrom rlang :=
 #' @export
 ws_size = function(){
   # Use to get a data frame of objects in the global environment and columns
@@ -45,7 +40,7 @@ ws_size = function(){
 #' @return The \code{one_to_pull}-th element of the input variable
 #' @export
 pull1 = function(.data, my_var, one_to_pull = 1){
-  # Use to pull out the first element of a list column in a tibble
+  # Use to pull out the first element of a list column in a data frame
   # Optionally you can instead pull the one_to_pull-th element
 
   .data[[deparse(substitute(my_var))]][[one_to_pull]]
@@ -82,7 +77,7 @@ theme_pres = function(base_size = 22, ...) {
 #' This function pulls out the top-left corner of a data frame or matrix. This
 #' is useful if the input is very tall and/or wide, such that printing the
 #' entire object fills up the entire console, even with the nice printing
-#' features of tibbles.
+#' features of e.g. tibbles.
 #' @details
 #' use negative nr or nc to select bottom or right corners, respectively.
 #'

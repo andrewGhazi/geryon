@@ -17,7 +17,7 @@ corner(x, nr = 5, nc = 5)
 This function pulls out the top-left corner of a data frame or matrix. This
 is useful if the input is very tall and/or wide, such that printing the
 entire object fills up the entire console, even with the nice printing
-features of tibbles.
+features of e.g. tibbles.
 }
 \details{
 use negative nr or nc to select bottom or right corners, respectively.
