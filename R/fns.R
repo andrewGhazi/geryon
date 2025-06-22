@@ -9,7 +9,6 @@
 #'   integer number of bytes).
 #' @import dplyr
 #' @import collapse
-#' @import ggplot2
 #' @import tibble
 #' @import rlang
 #' @importFrom rlang enquo
@@ -66,12 +65,16 @@ theme_pres = function(base_size = 22, ...) {
   base_line_size = base_size/22
   base_rect_size = base_size/22
 
-  theme_light(base_size = base_size,
-              base_family = base_family,
-              base_line_size = base_line_size,
-              base_rect_size = base_rect_size) %+replace%
-    theme(strip.text = element_text(color = 'grey10'),
-          ...)
+  t1 = ggplot2::theme_light(base_size = base_size,
+                            base_family = base_family,
+                            base_line_size = base_line_size,
+                            base_rect_size = base_rect_size)
+
+  t2 = ggplot2::theme(strip.text = ggplot2::element_text(color = 'grey10'),
+                      ...)
+
+  ggplot2::`%+replace%`(t1, t2)
+
 }
 
 #' Show the top-left corner
@@ -113,11 +116,14 @@ corner = function(x, nr = 5, nc = 5) {
 #' Filter to rows matching a pattern
 #' @param x input data frame
 #' @param pattern pattern to search for
-#' @param col_name column to search
+#' @param col_name column to search (unquoted)
 #' @export
 fpat = function(x, pattern, col_name) {
-  x %>%
-    dplyr::filter(grepl(pattern, x = {{ col_name }}))
+
+  v = x[[deparse(substitute(col_name))]]
+
+  x |> sbt(data.table::like(v,
+                            pattern))
 }
 
 #' @export
@@ -130,12 +136,12 @@ broad_pal = function(type = "seq"){
 
 #' @export
 scale_color_broad = function(..., type = "seq", aesthetics = "color") {
-  discrete_scale(aesthetics, "broad", broad_pal(type), ...)
+  ggplot2::discrete_scale(aesthetics, "broad", broad_pal(type), ...)
 }
 
 #' @export
 scale_fill_broad = function(..., type = "seq", aesthetics = "fill") {
-  discrete_scale(aesthetics, "broad", broad_pal(type), ...)
+  ggplot2::discrete_scale(aesthetics, "broad", broad_pal(type), ...)
 }
 
 #' Assign the default argument values of a function in the global environment
@@ -197,17 +203,21 @@ timer = function(m = 5, sound = 9) {
 #' Useful for identifying problematic cases when 1:1 joins come out at 1:many.
 #'
 #' @param data a data frame
-#' @param var a variable in that data frame
+#' @param var a variable in that data frame (unquoted)
 #' @param order_by if TRUE, order the result by the specified variable
 #' @examples
 #' mtcars |> find_dups(mpg)
 #' @export
 find_dups = function(data, var, order_by = TRUE) {
+
+  vn = deparse(substitute(var))
+  v = data[[vn]]
+
   res = data |>
-    dplyr::filter(has_dups({{var}}))
+    sbt(has_dups(v))
 
   if (order_by) {
-    res = res |> dplyr::arrange({{var}})
+    res = res |> roworderv(vn)
   }
 
   res

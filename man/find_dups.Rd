@@ -9,7 +9,7 @@ find_dups(data, var, order_by = TRUE)
 \arguments{
 \item{data}{a data frame}
 
-\item{var}{a variable in that data frame}
+\item{var}{a variable in that data frame (unquoted)}
 
 \item{order_by}{if TRUE, order the result by the specified variable}
 }

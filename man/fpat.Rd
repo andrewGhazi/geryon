@@ -11,7 +11,7 @@ fpat(x, pattern, col_name)
 
 \item{pattern}{pattern to search for}
 
-\item{col_name}{column to search}
+\item{col_name}{column to search (unquoted)}
 }
 \description{
 Filter to rows matching a pattern
