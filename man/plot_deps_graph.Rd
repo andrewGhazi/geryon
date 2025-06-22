@@ -9,23 +9,24 @@ plot_deps_graph(pkg, dep_type = c("depends", "imports", "linkingto"))
 \arguments{
 \item{pkg}{package string passed to \code{\link[pak:pkg_deps]{pak::pkg_dep}}}
 
-\item{dep_type}{type of dependencies to look up. Valid values are \code{c("depends",
-"imports", "suggests")}}
+\item{dep_type}{type of dependencies to look up. Valid values are
+\code{c("depends", "imports", "suggests")}}
 }
 \value{
 a ggplot
 }
 \description{
-Plot a package's dependency graph, coloring each node by the number of
-packages it depends on.
+Plot a package's dependency graph, coloring each node by the
+number of packages it depends on.
 }
 \details{
-If you include \code{"suggests"} among the dependency types to look up, be
-aware that suggests can be circular / cyclic. If this is detected, the node coloring
-will be turned off.
+If you include \code{"suggests"} among the dependency types to look
+up, be aware that suggests can be circular / cyclic. If this is detected,
+the node coloring will be turned off.
 }
 \examples{
-plot_deps_graph("dplyr") # dplyr has several dependencies
-plot_deps_graph("rlang") # rlang has only one
+# Using pkgcache in examples is not allowed, uncomment to run these interactively:
+# plot_deps_graph("ggplot2") # ggplot2 has many downstream dependencies
+# plot_deps_graph("rlang") # rlang has only one
 
 }

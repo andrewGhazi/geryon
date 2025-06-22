@@ -153,9 +153,9 @@ args2ge = function(f) {
   forms = formals(f)
 
   for (i in seq_along(forms)) {
-    if (class(forms[[i]]) == "name") next
+    if (inherits(forms[[i]], "name")) next
 
-    if (class(forms[[i]]) == "call") {
+    if (inherits(forms[[i]], "call")) {
       assign(x     = names(forms)[i],
              value = eval(forms[[i]]),
              envir = globalenv())

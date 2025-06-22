@@ -1,17 +1,18 @@
 #' Plot dependency graph
-#' @description Plot a package's dependency graph, coloring each node by the number of
-#'   packages it depends on.
+#' @description Plot a package's dependency graph, coloring each node by the
+#'   number of packages it depends on.
 #' @param pkg package string passed to \code{\link[pak:pkg_deps]{pak::pkg_dep}}
-#' @param dep_type type of dependencies to look up. Valid values are \code{c("depends",
-#'   "imports", "suggests")}
-#' @details If you include \code{"suggests"} among the dependency types to look up, be
-#'   aware that suggests can be circular / cyclic. If this is detected, the node coloring
-#'   will be turned off.
+#' @param dep_type type of dependencies to look up. Valid values are
+#'   \code{c("depends", "imports", "suggests")}
+#' @details If you include \code{"suggests"} among the dependency types to look
+#'   up, be aware that suggests can be circular / cyclic. If this is detected,
+#'   the node coloring will be turned off.
 #'
 #' @returns a ggplot
 #' @examples
-#' plot_deps_graph("dplyr") # dplyr has several dependencies
-#' plot_deps_graph("rlang") # rlang has only one
+#' # Using pkgcache in examples is not allowed, uncomment to run these interactively:
+#' # plot_deps_graph("ggplot2") # ggplot2 has many downstream dependencies
+#' # plot_deps_graph("rlang") # rlang has only one
 #'
 #' @export
 plot_deps_graph = function(pkg,
@@ -30,23 +31,22 @@ plot_deps_graph = function(pkg,
                    multiple = TRUE)
 
   nested_pkg_list = pak::pkg_deps(pkg) |>
-    dplyr::select(package, deps) |>
-    dplyr::rename(from = package)
+    slt(package, deps) |>
+    frename(from = package)
 
   names(nested_pkg_list$deps) = nested_pkg_list$from
 
-  unnested = data.table::rbindlist(nested_pkg_list$deps,
-                                   idcol = "from") |>
-    dplyr::rename(to = "package") |>
-    tibble::as_tibble()
-
-  attr(unnested, ".internal.selfref") = NULL # just to retain perfect consistency with the tidyr::unnest
+  unnested = rowbind(nested_pkg_list$deps,
+                     idcol = "from") |>
+    frename(to = "package") |>
+    qDT() |>
+    mtt(from = as.character(from))
 
   edge_list = unnested |>
-    dplyr::filter(tolower(type) %in% dep_type) |>
-    dplyr::select(from:to) |>
-    unique() |>
-    dplyr::filter(to != "R")
+    sbt(tolower(type) %in% dep_type) |>
+    slt(from:to) |>
+    funique() |>
+    sbt(to != "R")
 
   edge_vec = mapply(\(x,y) c(x,y),
                     edge_list$from, edge_list$to) |>
