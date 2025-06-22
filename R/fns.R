@@ -272,4 +272,22 @@ insert_img_link = function(img_dir = "images/") {
                          id = cur_source$id)
 }
 
+grid_pts = function(dat, bw=.01) {
+
+
+  sq_dat = dat |>
+    slt(x, y) |>
+    mtt(y = as.numeric(y) + 1) |>
+    gby(x, y) |>
+    mtt(sq_n = length(x),
+        side_n = ceiling(sqrt(sq_n)),
+        gi = 1:length(x),
+        x = x - bw*(side_n-1)/2 + bw*((gi-1) %% side_n),
+        y = y - bw*(side_n-1)/2 + 2*bw*floor((gi-1)/side_n)) |>
+    fungroup()
+
+  sq_dat |>
+    ggplot(aes(x,y)) +
+    geom_point(size = .5)
+}
 
