@@ -12,7 +12,7 @@ star(vote_df, verbose = TRUE)
 \item{verbose}{print score and automatic runoff tables}
 }
 \value{
-invisibly returns the automatic runoff table
+invisibly returns a list with the candidate score sums and the automatic runoff table
 }
 \description{
 Score Then Automatic Runoff (STAR) voting. See
@@ -34,6 +34,8 @@ n_cand = 4
 vote_df = data.frame(voter_id  = rep(1:n_voter, each = n_cand),
                      candidate = rep(1:n_cand, times = n_voter),
                      score = as.vector(replicate(n_voter, sim_vote(n_cand))))
+
+head(vote_df, n = 10)
 
 star(vote_df)
 }

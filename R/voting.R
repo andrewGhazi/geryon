@@ -3,7 +3,7 @@ check_vote_df = function(vote_df, third) {
 
   if (!right_cols) cli::cli_abort('vote_df must have these columns: c("voter_id", "candidate", \"{third}\")')
 
-  n_cand = dplyr::n_distinct(vote_df$candidate)
+  n_cand = fndistinct(vote_df$candidate)
 
   candidate_as_ints = is.integer(vote_df$candidate) && all(sort(unique(vote_df$candidate)) == seq_len(n_cand))
 
@@ -39,15 +39,15 @@ ranked_pairs = function(vote_df,
 
   cli::cli_alert_warning("This function is still experimental. It probably doesn't handle ties nor ballots with equal ranks properly.")
 
-  n_cand = dplyr::n_distinct(vote_df$candidate)
+  n_cand = fndistinct(vote_df$candidate)
 
   # Count prefs by pair ----
   .count_pair = function(c1, c2, vote_df) {
     res = vote_df |>
-      filter(candidate %in% c(c1, c2)) |>
-      summarise(pref_c1 = sum(vote_rank[candidate == c1] <  vote_rank[candidate == c2]),
-                pref_c2 = sum(vote_rank[candidate == c1] >  vote_rank[candidate == c2]),
-                eq_rank = sum(vote_rank[candidate == c1] == vote_rank[candidate == c2]))
+      sbt(candidate %in% c(c1, c2)) |>
+      smr(pref_c1 = sum(vote_rank[candidate == c1] <  vote_rank[candidate == c2]),
+          pref_c2 = sum(vote_rank[candidate == c1] >  vote_rank[candidate == c2]),
+          eq_rank = sum(vote_rank[candidate == c1] == vote_rank[candidate == c2]))
 
     list(res = res,
          selection = names(res)[which.max(unlist(res))])
@@ -56,17 +56,17 @@ ranked_pairs = function(vote_df,
 
   pair_df = combn(1:n_cand, 2) |> t() |>
     `colnames<-`(c("V1", "V2")) |>
-    as_tibble() |>
-    mutate(pair_res = mapply(.count_pair,
-                             V1, V2,
-                             MoreArgs = list(vote_df = vote_df),
-                             SIMPLIFY = FALSE)) |>
-    mutate(sel = sapply(pair_res,
-                        \(x) x$selection),
-           marg = sapply(pair_res,
-                         \(x) abs(x$res$pref_c1 - x$res$pref_c2)),
-           elim = FALSE) |>
-    arrange(-marg)
+    qDT() |>
+    mtt(pair_res = mapply(.count_pair,
+                          V1, V2,
+                          MoreArgs = list(vote_df = vote_df),
+                          SIMPLIFY = FALSE)) |>
+    mtt(sel = sapply(pair_res,
+                     \(x) x$selection),
+        marg = sapply(pair_res,
+                      \(x) abs(x$res$pref_c1 - x$res$pref_c2)),
+        elim = FALSE) |>
+    roworder(-marg)
 
   # Compute pair dominance graph ----
 
@@ -103,7 +103,7 @@ ranked_pairs = function(vote_df,
 #' properties.
 #' @inheritParams ranked_pairs
 #' @param verbose print score and automatic runoff tables
-#' @returns invisibly returns the automatic runoff table
+#' @returns invisibly returns a list with the candidate score sums and the automatic runoff table
 #' @examples
 #' sim_vote = function(n_cand) {
 #'   # Simulate one voter's scores from 0-5.
@@ -120,6 +120,8 @@ ranked_pairs = function(vote_df,
 #'                      candidate = rep(1:n_cand, times = n_voter),
 #'                      score = as.vector(replicate(n_voter, sim_vote(n_cand))))
 #'
+#' head(vote_df, n = 10)
+#'
 #' star(vote_df)
 #' @export
 star = function(vote_df, verbose = TRUE) {
@@ -131,9 +133,9 @@ star = function(vote_df, verbose = TRUE) {
   # Score ----
 
   top_scores = vote_df |>
-    summarise(.by = "candidate",
-              sum_score = sum(score)) |>
-    arrange(-sum_score)
+    gby(candidate) |>
+    smr(sum_score = sum(score)) |>
+    roworder(-sum_score)
 
   if (verbose) {
     cli::cli_inform("{.strong Score sums:}")
@@ -142,7 +144,7 @@ star = function(vote_df, verbose = TRUE) {
 
   top_scorers = top_scores |>
     head(n = 2) |>
-    pull(candidate) |>
+    get_elem("candidate") |>
     sort()
 
   # Then Automatic Runoff ----
@@ -159,12 +161,12 @@ star = function(vote_df, verbose = TRUE) {
   }
 
   res_df = vote_df |>
-    dplyr::filter(candidate %in% top_scorers) |>
-    arrange(voter_id, candidate) |>
-    group_by(voter_id) |>
-    summarise(preference = .get_preference(score, top_scorers)) |>
-    count(preference) |>
-    arrange(-n)
+    sbt(candidate %in% top_scorers) |>
+    roworder(voter_id, candidate) |>
+    gby(voter_id) |>
+    smr(preference = .get_preference(score, top_scorers)) |>
+    fcount(preference) |>
+    roworder(-N)
 
   if (verbose) {
     if (verbose) {
@@ -173,7 +175,7 @@ star = function(vote_df, verbose = TRUE) {
     }
   }
 
-  if (verbose) cli::cli_alert_success(paste0("The winning candidate is: ", dplyr::filter(res_df, !is.na(preference))$preference[1]))
+  if (verbose) cli::cli_alert_success(paste0("The winning candidate is: ", sbt(res_df, !is.na(preference))$preference[1]))
 
-  invisible(res_df)
+  invisible(list(scores = top_scores, ar_result = res_df))
 }
