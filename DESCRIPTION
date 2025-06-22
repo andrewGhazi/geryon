@@ -18,9 +18,9 @@ Imports:
     cli,
     fs,
     rstudioapi,
-    data.table
+    data.table,
+    collapse
 Suggests: 
-    testthat,
     igraph,
     ggraph,
     pak,
@@ -28,7 +28,7 @@ Suggests:
     grid,
     lobstr,
     beepr,
-    ks
+    ks, tinytest
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
