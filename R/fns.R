@@ -56,6 +56,9 @@ pull1 = function(.data, my_var, one_to_pull = 1){
 #' @param ... arguments to pass to ggplot2::theme()
 #' @export
 theme_pres = function(base_size = 22, ...) {
+
+  rlang::check_installed("ggplot2")
+
   base_family = ""
   base_line_size = base_size/22
   base_rect_size = base_size/22
@@ -131,11 +134,13 @@ broad_pal = function(type = "seq"){
 
 #' @export
 scale_color_broad = function(..., type = "seq", aesthetics = "color") {
+  rlang::check_installed("ggplot2")
   ggplot2::discrete_scale(aesthetics, "broad", broad_pal(type), ...)
 }
 
 #' @export
 scale_fill_broad = function(..., type = "seq", aesthetics = "fill") {
+  rlang::check_installed("ggplot2")
   ggplot2::discrete_scale(aesthetics, "broad", broad_pal(type), ...)
 }
 

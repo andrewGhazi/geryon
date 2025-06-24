@@ -18,17 +18,16 @@
 plot_deps_graph = function(pkg,
                            dep_type = c("depends", "imports", "linkingto")) {
 
-  rlang::check_installed("igraph")
-  rlang::check_installed("ggraph")
-  rlang::check_installed("grid")
-  rlang::check_installed("pals")
-  rlang::check_installed("pak")
+  req_pkgs = c("ggplot2", "igraph", "ggraph", "grid", "pals", "pak")
+  rlang::check_installed(req_pkgs)
 
   dep_type = tolower(dep_type)
 
   rlang::arg_match(dep_type,
                    values = c("depends", "imports", "suggests", "linkingto"),
                    multiple = TRUE)
+
+  # TODO check if it's empty
 
   nested_pkg_list = pak::pkg_deps(pkg) |>
     slt(package, deps) |>
@@ -52,9 +51,24 @@ plot_deps_graph = function(pkg,
                     edge_list$from, edge_list$to) |>
     unlist()
 
-  gr = igraph::make_directed_graph(edge_vec)
+  if (length(edge_vec) == 0) {
+    gr = igraph::make_empty_graph(1) |>
+      igraph::set_vertex_attr("label", value = pkg) |>
+      igraph::set_vertex_attr("name", value = pkg)
+  } else {
+    gr = igraph::make_directed_graph(edge_vec)
+  }
 
   ec = igraph::ecount(gr)
+
+  if (ec > 0 ) {
+    edges_geom = ggraph::geom_edge_link(arrow = grid::arrow(length = grid::unit(1.5, "mm"),
+                                                            type = "closed"),
+                                        ggplot2::aes(end_cap = ggraph::label_rect(node2.name)),
+                                        color = "#222222")
+  } else {
+    edges_geom = NULL
+  }
 
   if ("suggests" %in% dep_type && !igraph::is_acyclic(gr)) {
     cli::cli_alert_warning("Cycle detected among suggested packages. Can't color nodes by number of dependencies.")
@@ -62,19 +76,21 @@ plot_deps_graph = function(pkg,
     fill_scale = NULL
   } else {
     fill_scale = ggplot2::scale_fill_gradientn(colors = pals::parula(100)[12:97])
-    fill_aes = ggplot2::aes(label = name,
-                            fill = igraph::neighborhood_size(gr,
-                                                             mode = "out",
-                                                             order = ec,
-                                                             mindist = 1))
+    fill_aes = if (ec == 0) {
+      ggplot2::aes(label = pkg)
+    } else {
+      ggplot2::aes(label = name,
+                   fill = igraph::neighborhood_size(gr,
+                                                    mode = "out",
+                                                    order = ec,
+                                                    mindist = 1))
+    }
+
   }
 
   gr |>
     ggraph::ggraph(ifelse(ec > 1, "stress", "tree")) +
-    ggraph::geom_edge_link(arrow = grid::arrow(length = grid::unit(1.5, "mm"),
-                                               type = "closed"),
-                           ggplot2::aes(end_cap = ggraph::label_rect(node2.name)),
-                           color = "#222222") +
+    edges_geom +
     ggraph::geom_node_label(fill_aes) +
     fill_scale +
     ggplot2::theme_dark() +

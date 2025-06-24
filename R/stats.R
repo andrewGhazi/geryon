@@ -4,22 +4,48 @@
 #'   at each pair of points
 #' @param x a vector of x-values
 #' @param y a vector of y-values
-#' @param group a group
-#' @param ... arguments to pass to ks::kde for the density estimation
-
-#' @details This is useful for computing color-density scatterplots.
+#' @param bw bandwidth of the kde
+#' @details This is useful for computing color-density scatterplots. It will
+#'   output a progress bar with 10k or more points.
+#'
+#'   It's a simple 2D Gaussian kernel density esimate (with 0 covariance) in the
+#'   *standardized* space of the two inputs.
 #' @examples
 #' overlapping = data.frame(x = rt(3e3, df = 3), y = rt(3e3, df = 3))
 #' get_local_density(overlapping$x, overlapping$y)
 #' @export
-get_local_density = function(x, y, group = NULL, ...){
-  rlang::check_installed("ks")
+get_local_density = function(x, y, bw = .414) {
 
-  if (!missing(group)){stop('Groupwise coloring is not supported yet')}
+  Xs = cbind(x,y) |> fscale()
 
-  ks::kde(cbind(x, y),
-          eval.points = cbind(x, y),
-          ...)$estimate
+  N = nrow(Xs)
+
+  if (N >= 1e4) {
+    check = floor(seq(1, sqrt(N), length.out = 100)^2)
+    check_i = 1
+    cli::cli_progress_bar("Evaluating pointwise density estimate...", total = 100)
+  }
+
+  res = vector("numeric", N)
+
+  for (i in 1:(N-1)) {
+    v = exp(-rowSums((Xs[(i+1):N,, drop = FALSE] %r-% Xs[i,])^2) / bw)
+    # ^ collapse::`%r-%` makes this within 20% of the speed as a pure C++ version
+    # of this function.
+
+    res[i] = res[i] + sum(v)
+
+    res[(i+1):N] = res[(i+1):N] + v
+
+    if (N >= 1e4 && i == check[check_i]) {
+      check_i = check_i + 1
+      cli::cli_progress_update()
+    }
+  }
+
+  if (N >= 1e4) cli::cli_progress_done()
+
+  res
 }
 
 #' Add local density

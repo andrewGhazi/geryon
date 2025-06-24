@@ -4,23 +4,25 @@
 \alias{get_local_density}
 \title{Get local 2D density}
 \usage{
-get_local_density(x, y, group = NULL, ...)
+get_local_density(x, y, bw = 0.414)
 }
 \arguments{
 \item{x}{a vector of x-values}
 
 \item{y}{a vector of y-values}
 
-\item{group}{a group}
-
-\item{...}{arguments to pass to ks::kde for the density estimation}
+\item{bw}{bandwidth of the kde}
 }
 \description{
 Compute a 2D density estimate and return the estimate evaluated
 at each pair of points
 }
 \details{
-This is useful for computing color-density scatterplots.
+This is useful for computing color-density scatterplots. It will
+output a progress bar with 10k or more points.
+
+It's a simple 2D Gaussian kernel density esimate (with 0 covariance) in the
+\emph{standardized} space of the two inputs.
 }
 \examples{
 overlapping = data.frame(x = rt(3e3, df = 3), y = rt(3e3, df = 3))
