@@ -123,10 +123,23 @@ plot_deps_graph = function(pkg,
 #' @param order Consider combinations of this many packages. Be careful going
 #'   beyond 3.
 #' @details Use this function to identify which packages have the most unique
-#'   downstream dependencies. Set the order argument to check which pairs,
-#'   triplets, etc have the most unique dependencies.
+#'   downstream dependencies. For a package author, these are good targets to
+#'   prioritize for removal.
+#'
+#'   Because of the graph structure of dependencies, sometimes there isn't any
+#'   one package that adds a lot of unique dependencies, but there is a PAIR or
+#'   TRIPLET that, if removed, would. Set the \code{order} argument to check
+#'   which pairs, triplets, etc have the most unique dependencies. Be careful
+#'   going beyond 3 because the number of combinations grows quickly, and I
+#'   haven't optimized the internals of this function much :)
 #' @returns A data.table listing the packages and the number of unique
 #'   dependencies.
+#' @seealso [plot_deps_graph()]
+#' @examples
+#' # pkgcache isn't allowed in examples, uncomment and run interactively:
+#' # uniq_pkg_deps("ggplot2")
+#' # ^ scales adds the most unique dependencies to ggplot2 -- 6 including itself.
+#'
 #' @export
 uniq_pkg_deps = function(pkg, order = 1) {
 
