@@ -9,7 +9,7 @@
 <!-- [![CRAN status](https://www.r-pkg.org/badges/version/geryon)](https://CRAN.R-project.org/package=geryon)
 <!-- badges: end -->
 
-This is a package containing small utility functions.
+This package contains a variety of small functions.
 
 ## Installation
 
@@ -21,10 +21,46 @@ remotes::install_github("andrewGhazi/geryon")
 
 ## Functionality
 
-Right now this package contains only a handful of functions: `ws_size`,
-`pull1`, `get/add_local_density` and `theme_pres`.
+### `timer`
 
-### ws_size
+`geryon::timer(1/20)` to set a timer for three seconds.
+
+### Package dependency inspection
+
+Functions for package developers trying to prioritize dependencies for
+removal. Powered by `pak::pkg_deps()`. `plot_deps_graph()` and
+`uniq_pkg_deps()`. For example you can see that for the `ggplot2` devs,
+removing `scales` would lighten their dependency footprint the most:
+
+``` r
+library(geryon)
+
+uniq_pkg_deps("ggplot2", order = 1) |> suppressMessages()
+#>         pkg1 n_uniq_deps                                       uniq_deps
+#> 1     scales           6 farver, labeling, R6, RColorBrewer, viridisLite
+#> 2       mgcv           5                  Matrix, nlme, splines, lattice
+#> 3     tibble           5               utf8, magrittr, pillar, pkgconfig
+#> 4        cli           1                                                
+#> 5       glue           1                                                
+#> 6  grDevices           1                                                
+#> 7       grid           1                                                
+#> 8     gtable           1                                                
+#> 9    isoband           1                                                
+#> 10 lifecycle           1                                                
+#> 11      MASS           1                                                
+#> 12     rlang           1                                                
+#> 13     stats           1                                                
+#> 14     vctrs           1                                                
+#> 15     withr           1
+```
+
+``` r
+plot_deps_graph("ggplot2")
+```
+
+<img src="man/figures/ggplot2_deps.png" width="75%" />
+
+### `ws_size`
 
 It’s easy to see the memory usage of a single object with `object.size`
 but doing that in a sorted, pretty way for everything in the workspace
@@ -33,42 +69,104 @@ is a bit more involved. This function has taken care of that.
     > a = 1:10
     > tmp = mtcars
     > ws_size()
-    # A tibble: 2 × 2
-      obj      obj_size
-      <chr> <fs::bytes>
-    1 tmp         7.04K
-    2 a             680
+          obj   obj_size
+       <char> <fs_bytes>
+    1:    tmp      7.04K
+    2:      a        680
 
-### pull1
+### `pull1`
 
 `dplyr::pull` is a convenient way to pull out the values of a column
 from a data frame, but if you’ve got a long list column and just want to
 check one to make sure everything’s working, printing the whole list can
-clutter up the console. `pull1` just pulls out one.
+clutter up the console. `pull1` just pulls out one (the first, by
+default).
 
-    > tmp = data_frame(mu = 5:10, samples = purrr::map(mu, ~rnorm(10, mean = .x, sd = 1)))
-    > tmp
-    # A tibble: 6 x 2
-         mu    samples
-      <int>     <list>
-    1     5 <dbl [10]>
-    2     6 <dbl [10]>
-    3     7 <dbl [10]>
-    4     8 <dbl [10]>
-    5     9 <dbl [10]>
-    6    10 <dbl [10]>
-    > tmp %>% pull1(samples)
-     [1] 4.651063 3.986187 5.421502 4.554197 4.880644 4.511554 5.572671 4.948658 6.132115 5.545000
+``` r
+library(data.table)
+options(digits = 2)
 
-### theme_pres
+tmp = data.table(samples = replicate(3, rnorm(3), simplify = FALSE)) 
+tmp
+#>              samples
+#>               <list>
+#> 1:  0.42, 2.20,-1.51
+#> 2:  0.37,-0.69, 1.86
+#> 3:  0.48,-0.92, 0.24
+tmp |> pull1(samples)
+#> [1]  0.42  2.20 -1.51
+```
+
+### `theme_pres`
 
 This is simply a modified version of `ggplot2::theme_light` with larger
 text and dark facet labels. This makes it easier to prepare easy-to-read
 plots for presentations.
 
-    diamonds %>% sample_n(1000) %>% ggplot(aes(carat, price)) + geom_point() + theme_pres() + facet_wrap('cut')
+``` r
+library(ggplot2)
 
-![](man/figures/theme_pres_example.png)
+diamonds[sample.int(nrow(diamonds), 1e3),] |>
+  ggplot(aes(carat, price)) +
+  geom_point() +
+  theme_pres() +
+  facet_wrap("cut")
+```
+
+<img src="man/figures/theme_pres_example.png" width="75%" />
+
+### `corner`
+
+Print the top left (by default) corner of large rectangular objects:
+
+``` r
+X = matrix(rnorm(1e4), nrow = 100, ncol = 100)
+
+corner(X)
+#>        [,1]   [,2]  [,3]  [,4]   [,5]
+#> [1,] -0.037 -0.327  0.64  0.22 -1.649
+#> [2,]  1.000 -0.790  0.68  0.48 -0.785
+#> [3,] -1.097 -0.055  0.69 -0.17  0.061
+#> [4,] -0.039 -1.370  0.30  0.45  1.167
+#> [5,]  0.095  1.273 -0.15  0.18  0.499
+```
+
+### `fpat`
+
+Filter rows matching a pattern in a column:
+
+``` r
+ggplot2::diamonds |> fpat("Good", cut)
+#> # A tibble: 16,988 × 10
+#>    carat cut       color clarity depth table price     x     y     z
+#>    <dbl> <ord>     <ord> <ord>   <dbl> <dbl> <int> <dbl> <dbl> <dbl>
+#>  1  0.23 Good      E     VS1      56.9    65   327  4.05  4.07  2.31
+#>  2  0.31 Good      J     SI2      63.3    58   335  4.34  4.35  2.75
+#>  3  0.24 Very Good J     VVS2     62.8    57   336  3.94  3.96  2.48
+#>  4  0.24 Very Good I     VVS1     62.3    57   336  3.95  3.98  2.47
+#>  5  0.26 Very Good H     SI1      61.9    55   337  4.07  4.11  2.53
+#>  6  0.23 Very Good H     VS1      59.4    61   338  4     4.05  2.39
+#>  7  0.3  Good      J     SI1      64      55   339  4.25  4.28  2.73
+#>  8  0.3  Good      J     SI1      63.4    54   351  4.23  4.29  2.7 
+#>  9  0.3  Good      J     SI1      63.8    56   351  4.23  4.26  2.71
+#> 10  0.3  Very Good J     SI1      62.7    59   351  4.21  4.27  2.66
+#> # ℹ 16,978 more rows
+```
+
+### `find_dups` / `has_dups`
+
+Filter a data frame to rows where the given column has duplicates
+(i.e. don’t drop the first occurrence):
+
+``` r
+mtcars |> find_dups(wt)
+#>                   mpg cyl disp  hp drat  wt qsec vs am gear carb
+#> Hornet Sportabout  19   8  360 175  3.1 3.4   17  0  0    3    2
+#> Merc 280           19   6  168 123  3.9 3.4   18  1  0    4    4
+#> Merc 280C          18   6  168 123  3.9 3.4   19  1  0    4    4
+#> Duster 360         14   8  360 245  3.2 3.6   16  0  0    3    4
+#> Maserati Bora      15   8  301 335  3.5 3.6   15  0  1    5    8
+```
 
 ### get/add_local_density
 
@@ -79,11 +177,14 @@ then you aesthetically map the resulting `local_density` column to
 color.
 
 ``` r
-library(ggplot2)
-library(magrittr)
-overplotted = data.frame(x = rt(1e4, df = 5),
-                         y = rt(1e4, df = 5))
-overplotted %>% 
+overplotted = data.frame(x = c(rnorm(1e4, sd = 3), 
+                               rnorm(3e2, c(-1,1), sd = .1), 
+                               seq(-1,1, length.out = 300)),
+                         y = c(rnorm(1e4, sd = 3), 
+                               rnorm(3e2, 2, sd = .1), 
+                               seq(-1,1, length.out = 300)^2 - 1))
+
+overplotted |> 
   ggplot(aes(x,y)) +
   geom_point(alpha = .1) + 
   theme_light() + 
@@ -94,13 +195,13 @@ overplotted %>%
 
 ``` r
 library(geryon)
-overplotted %>% 
-  add_local_density(x, y) %>% 
+
+overplotted |> 
+  add_local_density(x, y, bw = .02) |> 
   ggplot(aes(x,y)) +
-  geom_point(aes(color = local_density)) + # <-- this is the important bit
+  geom_point(aes(color = local_density)) + 
   theme_light() + 
-  scale_color_viridis_c() + 
-  labs(title = 'Coloring by local density naturally transitions between\nscattered points to a density estimate')
+  scale_color_viridis_c()  
 ```
 
 <img src="man/figures/color_density.png" width="75%" />
@@ -122,7 +223,7 @@ into your Quarto
 report](https://quarto.org/docs/authoring/figures.html).
 
 It’s provided as an RStudio addin so you can bind a keyboard shortcut to
-it. I use `Ctrl+Shift+V`.
+it. I use `Ctrl+Shift+H`.
 
 This function makes some assumptions and currently doesn’t do many
 checks. There are some caveats:

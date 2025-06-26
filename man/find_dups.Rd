@@ -20,3 +20,6 @@ Useful for identifying problematic cases when 1:1 joins come out at 1:many.
 \examples{
 mtcars |> find_dups(mpg)
 }
+\seealso{
+\code{\link[=has_dups]{has_dups()}}
+}

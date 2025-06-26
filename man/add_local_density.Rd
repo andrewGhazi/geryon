@@ -4,7 +4,14 @@
 \alias{add_local_density}
 \title{Add local density}
 \usage{
-add_local_density(.data, x, y, var = "local_density", sort_output = TRUE)
+add_local_density(
+  .data,
+  x,
+  y,
+  var = "local_density",
+  bw = 0.414,
+  sort_output = TRUE
+)
 }
 \arguments{
 \item{.data}{input data frame}
@@ -14,6 +21,8 @@ add_local_density(.data, x, y, var = "local_density", sort_output = TRUE)
 \item{y}{unquoted column name of variable to use for the y-variable}
 
 \item{var}{name to use for the output column}
+
+\item{bw}{bandwidth for the density estimate}
 
 \item{sort_output}{if TRUE, return the output sorted by local density}
 }

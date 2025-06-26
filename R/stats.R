@@ -55,11 +55,13 @@ get_local_density = function(x, y, bw = .414) {
 #' @param x unquoted column name of variable to use for the x-variable
 #' @param y unquoted column name of variable to use for the y-variable
 #' @param var name to use for the output column
+#' @param bw bandwidth for the density estimate
 #' @param sort_output if TRUE, return the output sorted by local density
 #' @details The \code{sort_output} parameter sometimes helps the output plot
 #'   look a little less speckled.
 #' @export
-add_local_density = function(.data, x, y, var = 'local_density', sort_output = TRUE){
+add_local_density = function(.data, x, y, var = 'local_density', bw = .414,
+                             sort_output = TRUE){
   vn = (substitute(var))
   eq_x = .data[[deparse(substitute(x))]]
   eq_y = .data[[deparse(substitute(y))]]
@@ -68,11 +70,11 @@ add_local_density = function(.data, x, y, var = 'local_density', sort_output = T
 
     nc = ncol(.data)
 
-    mtt(.data, .eq_var = get_local_density(eq_x, eq_y)) |>
+    mtt(.data, .eq_var = get_local_density(eq_x, eq_y, bw = bw)) |>
       frename(.eq_var = vn, .nse = FALSE) |>
       roworderv(cols = nc+1)
   } else{
-    mtt(.data, .eq_var = get_local_density(eq_x, eq_y)) |>
+    mtt(.data, .eq_var = get_local_density(eq_x, eq_y, bw = bw)) |>
       frename(.eq_var = vn, .nse = FALSE)
   }
 }

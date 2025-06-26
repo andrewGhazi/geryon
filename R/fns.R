@@ -207,6 +207,7 @@ timer = function(m = 5, sound = 9) {
 #' @param order_by if TRUE, order the result by the specified variable
 #' @examples
 #' mtcars |> find_dups(mpg)
+#' @seealso [has_dups()]
 #' @export
 find_dups = function(data, var, order_by = TRUE) {
 
@@ -230,6 +231,7 @@ find_dups = function(data, var, order_by = TRUE) {
 #'
 #' @param x a vector
 #' @returns a logical vector the same length as the input
+#' @seealso [find_dups()]
 #' @seealso [vctrs::vec_duplicate_detect()] (will be faster for large x)
 #' @export
 has_dups = function(x) {

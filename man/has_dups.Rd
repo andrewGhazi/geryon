@@ -16,5 +16,7 @@ a logical vector the same length as the input
 Return TRUE on all elements of a vector that has any duplicates (i.e. including the first occurrence)
 }
 \seealso{
+\code{\link[=find_dups]{find_dups()}}
+
 \code{\link[vctrs:vec_duplicate]{vctrs::vec_duplicate_detect()}} (will be faster for large x)
 }

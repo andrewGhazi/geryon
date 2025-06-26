@@ -20,21 +20,42 @@ knitr::opts_chunk$set(
 <!-- [![CRAN status](https://www.r-pkg.org/badges/version/geryon)](https://CRAN.R-project.org/package=geryon)
 <!-- badges: end -->
 
-This is a package containing small utility functions.
+This package contains a variety of small functions.
 
 ## Installation
 
 You can install the released version of geryon from this Github repo.
 
-``` r
+```{r eval=FALSE}
 remotes::install_github("andrewGhazi/geryon")
 ```
 
 ## Functionality
 
-Right now this package contains only a handful of functions: `ws_size`, `pull1`, `get/add_local_density` and `theme_pres`.
+### `timer`
 
-### ws_size
+`geryon::timer(1/20)` to set a timer for three seconds. 
+
+### Package dependency inspection
+
+Functions for package developers trying to prioritize dependencies for removal. Powered by `pak::pkg_deps()`. `plot_deps_graph()` and `uniq_pkg_deps()`. For example you can see that for the `ggplot2` devs, removing `scales` would lighten their dependency footprint the most:
+
+```{r}
+library(geryon)
+
+uniq_pkg_deps("ggplot2", order = 1) |> suppressMessages()
+```
+
+```{r eval=FALSE}
+plot_deps_graph("ggplot2")
+```
+
+
+```{r echo = FALSE, out.width = '75%'}
+knitr::include_graphics("man/figures/ggplot2_deps.png")
+```
+
+### `ws_size`
 
 It's easy to see the memory usage of a single object with `object.size` but doing that in a sorted, pretty way for everything in the workspace is a bit more involved. This function has taken care of that. 
 
@@ -42,41 +63,68 @@ It's easy to see the memory usage of a single object with `object.size` but doin
 > a = 1:10
 > tmp = mtcars
 > ws_size()
-# A tibble: 2 × 2
-  obj      obj_size
-  <chr> <fs::bytes>
-1 tmp         7.04K
-2 a             680
+      obj   obj_size
+   <char> <fs_bytes>
+1:    tmp      7.04K
+2:      a        680
 ```
 
-### pull1
+### `pull1`
 
-`dplyr::pull` is a convenient way to pull out the values of a column from a data frame, but if you've got a long list column and just want to check one to make sure everything's working, printing the whole list can clutter up the console. `pull1` just pulls out one. 
+`dplyr::pull` is a convenient way to pull out the values of a column from a data frame, but if you've got a long list column and just want to check one to make sure everything's working, printing the whole list can clutter up the console. `pull1` just pulls out one (the first, by default). 
 
-```
-> tmp = data_frame(mu = 5:10, samples = purrr::map(mu, ~rnorm(10, mean = .x, sd = 1)))
-> tmp
-# A tibble: 6 x 2
-     mu    samples
-  <int>     <list>
-1     5 <dbl [10]>
-2     6 <dbl [10]>
-3     7 <dbl [10]>
-4     8 <dbl [10]>
-5     9 <dbl [10]>
-6    10 <dbl [10]>
-> tmp %>% pull1(samples)
- [1] 4.651063 3.986187 5.421502 4.554197 4.880644 4.511554 5.572671 4.948658 6.132115 5.545000
+```{r message=FALSE}
+library(data.table)
+options(digits = 2)
+
+tmp = data.table(samples = replicate(3, rnorm(3), simplify = FALSE)) 
+tmp
+tmp |> pull1(samples)
 ```
 
-### theme_pres
+### `theme_pres`
 
 This is simply a modified version of `ggplot2::theme_light` with larger text and dark facet labels. This makes it easier to prepare easy-to-read plots for presentations.
 
+```{r eval = FALSE}
+library(ggplot2)
+
+diamonds[sample.int(nrow(diamonds), 1e3),] |>
+  ggplot(aes(carat, price)) +
+  geom_point() +
+  theme_pres() +
+  facet_wrap("cut")
 ```
-diamonds %>% sample_n(1000) %>% ggplot(aes(carat, price)) + geom_point() + theme_pres() + facet_wrap('cut')
+
+```{r echo = FALSE, out.width = '75%'}
+knitr::include_graphics('man/figures/theme_pres_example.png')
 ```
-![](man/figures/theme_pres_example.png)
+
+### `corner`
+
+Print the top left (by default) corner of large rectangular objects:
+
+```{r}
+X = matrix(rnorm(1e4), nrow = 100, ncol = 100)
+
+corner(X)
+```
+
+### `fpat`
+
+Filter rows matching a pattern in a column:
+
+```{r}
+ggplot2::diamonds |> fpat("Good", cut)
+```
+
+### `find_dups` / `has_dups`
+
+Filter a data frame to rows where the given column has duplicates (i.e. don't drop the first occurrence):
+
+```{r}
+mtcars |> find_dups(wt)
+```
 
 
 ### get/add_local_density
@@ -84,11 +132,14 @@ diamonds %>% sample_n(1000) %>% ggplot(aes(carat, price)) + geom_point() + theme
 This is handy for dealing with severe overplotting in situations where you still want to plot individual points rather than a density estimate. You simply give `add_local_density` the two variables used in your plot, then you aesthetically map the resulting `local_density` column to color.
 
 ```{r out.width = '75%', eval = FALSE}
-library(ggplot2)
-library(magrittr)
-overplotted = data.frame(x = rt(1e4, df = 5),
-                         y = rt(1e4, df = 5))
-overplotted %>% 
+overplotted = data.frame(x = c(rnorm(1e4, sd = 3), 
+                               rnorm(3e2, c(-1,1), sd = .1), 
+                               seq(-1,1, length.out = 300)),
+                         y = c(rnorm(1e4, sd = 3), 
+                               rnorm(3e2, 2, sd = .1), 
+                               seq(-1,1, length.out = 300)^2 - 1))
+
+overplotted |> 
   ggplot(aes(x,y)) +
   geom_point(alpha = .1) + 
   theme_light() + 
@@ -100,13 +151,13 @@ knitr::include_graphics('man/figures/overplotted.png')
 
 ```{r eval = FALSE}
 library(geryon)
-overplotted %>% 
-  add_local_density(x, y) %>% 
+
+overplotted |> 
+  add_local_density(x, y, bw = .02) |> 
   ggplot(aes(x,y)) +
-  geom_point(aes(color = local_density)) + # <-- this is the important bit
+  geom_point(aes(color = local_density)) + 
   theme_light() + 
-  scale_color_viridis_c() + 
-  labs(title = 'Coloring by local density naturally transitions between\nscattered points to a density estimate')
+  scale_color_viridis_c()  
 ```
 ```{r echo = FALSE, out.width='75%'}
 knitr::include_graphics('man/figures/color_density.png')
@@ -120,7 +171,7 @@ I'm working on a color_density_scatter function that goes straight from the data
 
 This function inserts an image link (`![](images/blah.png)`) to an image on your clipboard into the current source document at the cursor. This way you don't have to fuss around with the file manager to [get images into your Quarto report](https://quarto.org/docs/authoring/figures.html).
 
-It's provided as an RStudio addin so you can bind a keyboard shortcut to it. I use `Ctrl+Shift+V`.
+It's provided as an RStudio addin so you can bind a keyboard shortcut to it. I use `Ctrl+Shift+H`.
 
 This function makes some assumptions and currently doesn't do many checks. There are some caveats: 
 
