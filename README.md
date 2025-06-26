@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# geryon <img src="man/figures/logo.png" align="right" title="Behold the one whose stench fills all the world!" width = "20%"/>
+# geryon <img src="man/figures/logo.png" align="right" title="Behold the one whose stench fills all the world!" height="138" />
 
 <!-- badges: start -->
 
@@ -88,13 +88,13 @@ options(digits = 2)
 
 tmp = data.table(samples = replicate(3, rnorm(3), simplify = FALSE)) 
 tmp
-#>                 samples
-#>                  <list>
-#> 1:     2.21,-0.47,-1.43
-#> 2:       0.57,0.69,0.20
-#> 3:  0.043,-2.494,-0.759
+#>              samples
+#>               <list>
+#> 1: -0.28, 0.72,-1.11
+#> 2:  0.99, 2.93,-0.52
+#> 3: -1.49,-0.68,-1.39
 tmp |> pull1(samples)
-#> [1]  2.21 -0.47 -1.43
+#> [1] -0.28  0.72 -1.11
 ```
 
 ### `theme_pres`
@@ -123,12 +123,12 @@ Print the top left (by default) corner of large rectangular objects:
 X = matrix(rnorm(1e4), nrow = 100, ncol = 100)
 
 corner(X)
-#>       [,1]   [,2]   [,3]  [,4]   [,5]
-#> [1,] -1.38 -0.323 -0.082  1.87 -2.068
-#> [2,] -1.43 -0.028 -1.272  1.07  1.670
-#> [3,]  1.08  1.077 -0.192 -1.53  0.127
-#> [4,]  0.21 -0.352  0.435 -0.20  0.092
-#> [5,]  0.64  0.296 -0.220  0.75 -0.995
+#>        [,1]  [,2]  [,3]   [,4]  [,5]
+#> [1,] -1.184  1.25  0.80  0.074 -0.55
+#> [2,] -0.683  0.40  0.94  0.716  1.47
+#> [3,] -1.885 -2.28 -1.31  0.637 -0.23
+#> [4,] -1.390 -0.15 -1.03  0.961 -1.33
+#> [5,] -0.011  0.91  0.16 -0.876 -0.49
 ```
 
 ### `fpat`
