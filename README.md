@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# geryon <img src="man/figures/logo.png" align="right" title="Behold the one whose stench fills all the world!" height="138" />
+# geryon <img src="man/figures/logo.png" align="right" title="Behold the one whose stench fills all the world!" height="155" />
 
 <!-- badges: start -->
 
@@ -13,7 +13,7 @@ This package contains a variety of small functions.
 
 ## Installation
 
-You can install the released version of geryon from this Github repo.
+You can install `geryon` from this repo with this command:
 
 ``` r
 remotes::install_github("andrewGhazi/geryon")
@@ -88,13 +88,13 @@ options(digits = 2)
 
 tmp = data.table(samples = replicate(3, rnorm(3), simplify = FALSE)) 
 tmp
-#>              samples
-#>               <list>
-#> 1: -0.28, 0.72,-1.11
-#> 2:  0.99, 2.93,-0.52
-#> 3: -1.49,-0.68,-1.39
+#>                    samples
+#>                     <list>
+#> 1:        1.63,-0.50, 0.55
+#> 2:  1.1873, 0.0079,-1.8897
+#> 3:    -0.032,-0.157,-0.260
 tmp |> pull1(samples)
-#> [1] -0.28  0.72 -1.11
+#> [1]  1.63 -0.50  0.55
 ```
 
 ### `theme_pres`
@@ -123,12 +123,12 @@ Print the top left (by default) corner of large rectangular objects:
 X = matrix(rnorm(1e4), nrow = 100, ncol = 100)
 
 corner(X)
-#>        [,1]  [,2]  [,3]   [,4]  [,5]
-#> [1,] -1.184  1.25  0.80  0.074 -0.55
-#> [2,] -0.683  0.40  0.94  0.716  1.47
-#> [3,] -1.885 -2.28 -1.31  0.637 -0.23
-#> [4,] -1.390 -0.15 -1.03  0.961 -1.33
-#> [5,] -0.011  0.91  0.16 -0.876 -0.49
+#>       [,1]  [,2]  [,3]   [,4]   [,5]
+#> [1,] -1.71 -0.40 -1.03 -0.487 -0.258
+#> [2,]  0.79  0.38 -0.95 -0.308 -0.357
+#> [3,]  0.23  0.49 -0.90  2.517  0.085
+#> [4,] -1.45  0.98 -0.93 -0.092  0.148
+#> [5,] -0.65  0.21  0.37 -0.372 -0.823
 ```
 
 ### `fpat`
