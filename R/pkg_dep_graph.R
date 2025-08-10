@@ -109,6 +109,7 @@ plot_deps_graph = function(pkg,
     ggplot2::theme(axis.title        = ggplot2::element_blank(),
                    axis.text         = ggplot2::element_blank(), axis.ticks = ggplot2::element_blank(),
                    plot.background   = ggplot2::element_rect(fill = "#444444"),
+                   panel.grid        = ggplot2::element_blank(),
                    legend.background = ggplot2::element_rect(fill = "#666666"),
                    legend.ticks      = ggplot2::element_line(colour = "#333333")) +
     ggplot2::labs(fill = "n_deps")
